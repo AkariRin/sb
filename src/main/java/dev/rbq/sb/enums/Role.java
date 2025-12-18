@@ -5,6 +5,11 @@ package dev.rbq.sb.enums;
  */
 public enum Role {
     /**
+     * 超级管理员（最高权限）
+     */
+    SUPER_ADMIN,
+
+    /**
      * 管理员
      */
     ADMIN,

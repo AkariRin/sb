@@ -1,7 +1,10 @@
 package dev.rbq.sb.service;
 
 import dev.rbq.sb.entity.VerificationCodeLog;
+import dev.rbq.sb.enums.VerificationPurpose;
+import dev.rbq.sb.repository.UserRepository;
 import dev.rbq.sb.repository.VerificationCodeLogRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -26,6 +29,9 @@ public class VerificationCodeService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Value("${app.verification-code.length:6}")
     private int codeLength;
 
@@ -49,10 +55,15 @@ public class VerificationCodeService {
      * 发送验证码
      *
      * @param email     邮箱
+     * @param purpose   验证码用途
      * @param ipAddress IP地址
-     * @throws IllegalStateException 当触发防刷限制时
+     * @param session   HTTP会话（可选，CHANGE_EMAIL时必需）
+     * @throws IllegalStateException 当触发防刷限制或业务规则校验失败时
      */
-    public void sendVerificationCode(String email, String ipAddress) {
+    public void sendVerificationCode(String email, VerificationPurpose purpose, String ipAddress, HttpSession session) {
+        // 业务逻辑校验
+        validateBusinessRules(email, purpose, session);
+
         // 检查邮箱发送频率限制（60秒内只能发送1次）
         String sentKey = SENT_KEY_PREFIX + email;
         if (Boolean.TRUE.equals(redisTemplate.hasKey(sentKey))) {
@@ -92,6 +103,46 @@ public class VerificationCodeService {
             // 记录失败日志
             logRepository.save(new VerificationCodeLog(email, ipAddress, false));
             throw new RuntimeException("验证码发送失败：" + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 验证业务规则
+     *
+     * @param email   邮箱
+     * @param purpose 验证码用途
+     * @param session HTTP会话
+     */
+    private void validateBusinessRules(String email, VerificationPurpose purpose, HttpSession session) {
+        switch (purpose) {
+            case REGISTER:
+                // 注册：检查邮箱是否已存在
+                if (userRepository.existsByEmail(email)) {
+                    throw new IllegalArgumentException("该邮箱已被注册");
+                }
+                break;
+
+
+            case RESET_PASSWORD:
+                // 重置密码：检查用户是否存在
+                if (!userRepository.existsByEmail(email)) {
+                    throw new IllegalArgumentException("该邮箱未注册");
+                }
+                break;
+
+            case CHANGE_EMAIL:
+                // 修改邮箱：需要登录
+                if (session == null || session.getAttribute("userId") == null) {
+                    throw new IllegalStateException("请先登录");
+                }
+                // 检查新邮箱是否已被使用
+                if (userRepository.existsByEmail(email)) {
+                    throw new IllegalArgumentException("该邮箱已被使用");
+                }
+                break;
+
+            default:
+                throw new IllegalArgumentException("不支持的验证码用途");
         }
     }
 

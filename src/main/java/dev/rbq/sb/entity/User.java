@@ -38,7 +38,7 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, columnDefinition = "ENUM('ADMIN', 'USER')")
+    @Column(name = "role", nullable = false, columnDefinition = "ENUM('SUPER_ADMIN', 'ADMIN', 'USER')")
     private Role role = Role.USER;
 
     @Column(name = "email_verified", nullable = false)
@@ -52,13 +52,13 @@ public class User {
     private LocalDateTime registerTime;
 
     /**
-     * 确保管理员不能被封禁
+     * 确保超级管理员和管理员不能被封禁
      */
     @PrePersist
     @PreUpdate
     public void validateAdminNotBanned() {
-        if (role == Role.ADMIN && banned) {
-            throw new IllegalStateException("管理员不能被封禁");
+        if ((role == Role.SUPER_ADMIN || role == Role.ADMIN) && banned) {
+            throw new IllegalStateException("超级管理员和管理员不能被封禁");
         }
     }
 

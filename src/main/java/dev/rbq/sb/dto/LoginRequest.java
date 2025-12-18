@@ -14,9 +14,9 @@ public class LoginRequest {
     @Size(max = 32, message = "邮箱长度不能超过32个字符")
     private String email;
 
-    @NotBlank(message = "验证码不能为空")
-    @Size(min = 6, max = 6, message = "验证码必须为6位数字")
-    private String verificationCode;
+    @NotBlank(message = "密码不能为空")
+    @Size(min = 6, max = 32, message = "密码长度必须为6-32个字符")
+    private String password;
 
     // Getters and Setters
 
@@ -28,12 +28,12 @@ public class LoginRequest {
         this.email = email;
     }
 
-    public String getVerificationCode() {
-        return verificationCode;
+    public String getPassword() {
+        return password;
     }
 
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
 
