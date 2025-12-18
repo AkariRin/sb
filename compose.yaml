@@ -1,0 +1,46 @@
+services:
+  sb:
+    image: akaririn/sb:latest
+    restart: always
+    ports:
+      - 8000:8000
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      SERVER_PORT: "8000"
+      DB_URL: "mysql://mysql:3306/sb"
+      DB_USERNAME: "sb"
+      DB_PASSWORD: "sb_password"
+      JWT_SECRET: "YOUR_JWT_SECRET"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+
+  mysql:
+    image: mysql:latest
+    restart: always
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: "root_password"
+      MYSQL_DATABASE: "sb"
+      MYSQL_USER: "sb"
+      MYSQL_PASSWORD: "sb_password"
+
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
