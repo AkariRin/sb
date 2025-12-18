@@ -20,7 +20,7 @@ public class UserController {
     /**
      * 获取当前用户信息
      */
-    @GetMapping("/me")
+    @GetMapping
     public ApiResponse<UserResponse> getCurrentUser(HttpSession session) {
         UserResponse user = userService.getCurrentUser(session);
         return ApiResponse.success(user);
@@ -29,7 +29,7 @@ public class UserController {
     /**
      * 更新用户信息
      */
-    @PutMapping("/info")
+    @PostMapping
     public ApiResponse<UserResponse> updateUserInfo(
             @Valid @RequestBody UpdateUserInfoRequest request,
             HttpSession session) {

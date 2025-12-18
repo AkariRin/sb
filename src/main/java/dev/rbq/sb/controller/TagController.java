@@ -37,7 +37,7 @@ public class TagController {
     /**
      * 更新标签（仅管理员及以上）
      */
-    @PostMapping("/update")
+    @PostMapping
     public ApiResponse<TagResponse> updateTag(
             @Valid @RequestBody UpdateTagRequest request,
             HttpSession session) {
