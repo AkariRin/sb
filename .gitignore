@@ -35,4 +35,6 @@ out/
 ### VS Code ###
 .vscode/
 
-.claude-docs/
+### Dev Configuration ###
+**/application-dev.properties
+claude-docs/

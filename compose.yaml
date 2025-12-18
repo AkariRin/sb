@@ -12,7 +12,6 @@ services:
       DB_URL: "mysql://mysql:3306/sb"
       DB_USERNAME: "sb"
       DB_PASSWORD: "sb_password"
-      JWT_SECRET: "YOUR_JWT_SECRET"
       REDIS_HOST: "redis"
       REDIS_PORT: "6379"
       REDIS_PASSWORD: ""
