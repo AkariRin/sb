@@ -1,6 +1,7 @@
 package dev.rbq.sb.dto;
 
 import dev.rbq.sb.enums.Role;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -8,20 +9,28 @@ import java.util.UUID;
 /**
  * 用户信息响应DTO
  */
+@Schema(description = "用户信息响应")
 public class UserResponse {
 
+    @Schema(description = "用户ID", example = "123e4567-e89b-12d3-a456-426614174000")
     private UUID id;
 
+    @Schema(description = "用户邮箱", example = "user@example.com")
     private String email;
 
+    @Schema(description = "用户名", example = "张三")
     private String username;
 
+    @Schema(description = "用户角色", example = "USER")
     private Role role;
 
+    @Schema(description = "邮箱是否已验证", example = "true")
     private Boolean emailVerified;
 
+    @Schema(description = "是否被封禁", example = "false")
     private Boolean banned;
 
+    @Schema(description = "注册时间", example = "2025-12-26T10:30:00")
     private LocalDateTime registerTime;
 
     // Getters and Setters
@@ -82,4 +91,3 @@ public class UserResponse {
         this.registerTime = registerTime;
     }
 }
-

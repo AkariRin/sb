@@ -1,25 +1,31 @@
 package dev.rbq.sb.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * 统一API响应格式
  *
  * @param <T> 数据类型
  */
+@Schema(description = "统一API响应格式")
 public class ApiResponse<T> {
 
     /**
      * 响应码
      */
+    @Schema(description = "响应状态码", example = "200")
     private Integer code;
 
     /**
      * 响应消息
      */
+    @Schema(description = "响应消息", example = "操作成功")
     private String message;
 
     /**
      * 响应数据
      */
+    @Schema(description = "响应数据")
     private T data;
 
     public ApiResponse() {
@@ -92,4 +98,3 @@ public class ApiResponse<T> {
         this.data = data;
     }
 }
-
